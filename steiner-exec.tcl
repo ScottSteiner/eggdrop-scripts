@@ -24,7 +24,7 @@ namespace eval steiner {
 
 	proc execute { targ cmd } {
 		if {$cmd == "date"}	{ set cmd "date +%F\\ %T%:::z" }
-		if {$cmd == "sysinfo"}	{ set cmd "sysinfo" }
+		if {$cmd == "sysinfo"}	{ set cmd "/usr/local/bin/sysinfo" }
 		if {$cmd == "uname"}	{ set cmd "uname -a" }
 		if {$cmd == "stats"}	{ puthelp "PRIVMSG $targ :Channel stats can be found at http://scottsteiner.is-great.org/stats.php"; return 1 }
 		catch { eval exec $cmd } output
