@@ -16,7 +16,7 @@ namespace eval steiner {
 	package require http;package require json;package require tdom
 	safesetudef weather
 	foreach bind $steiner::settings::weather::binds::location { bind pub - ${steiner::settings::prefix}$bind steiner::weather::location }
-	foreach bind $steiner::settings::weather::binds::time { bind pub - ${steiner::settings::prefix}$bind steiner::weather::time }
+	foreach bind $steiner::settings::weather::binds::time { bind pub - ${steiner::settings::prefix}$bind steiner::weather::public }
 	foreach bind $steiner::settings::weather::binds::weather { bind pub - ${steiner::settings::prefix}$bind steiner::weather::public }
 
 	variable version 1.2
@@ -65,9 +65,8 @@ namespace eval steiner {
 					set nodeList [[dom parse [::http::data [::http::geturl "http://$steiner::settings::weather::ipaddress/auto/wui/geo/AlertsXML/index.xml?query=$zip" -timeout [expr round($steiner::settings::weather::timeout * 1000)]]]] documentElement]
 					foreach nodeName [$nodeList selectNodes /alerts/alert/AlertItem/description/text()] { lappend warnings [$nodeName data] }
 					if {[llength $warnings]} {
-						set alerturl "http://www.accuweather.com/en/us/alerts/$zip/watches-warnings/"
-						set accuweather "http://www.accuweather.com/us/nothing/finer/$zip/watches-warnings.asp"
-						set tokens [list %alert_website% [make_bitly $alerturl] %warnings% "[join [lsort -unique $warnings] ", "]"]
+						set alerturl "http://www.accuweather.com/us/nothing/finer/$zip/watches-warnings.asp"
+						set tokens [list %alert_website% [make_bitly $accuweather] %warnings% "[join [lsort -unique $warnings] ", "]"]
 						set alert [string map $tokens $steiner::settings::weather::alert_format]
 					} else { set alert "" }
 				}
@@ -86,11 +85,16 @@ namespace eval steiner {
 		} catch] == 1} { putlog "weather: Failed to get $action data for $location: $catch.  String length of [string length $xml]\n$xml"; return "Failed to get \002$action\002 data for \002$location\002: $catch." }\
 		else { return $catch }
 	}
-	proc set_location {nick uhost hand chan text} {
-		if {[file exists $steiner::weather::savelocation]} {catch {exec cp -f $steiner::weather::savelocation $steiner::weather::savelocation.bak}}
-		set locdata [open $steiner::weather::savelocation w]
+	proc location {nick uhost hand chan text} {
+		if {![validuser $hand]} {
+			adduser $nick $uhost
+			chattr $nick -hp
+			set lochand [nick2hand $nick]
+			putchan $chan "fff [nick2hand $nick]"
+		} else { set lochand $hand }
+		putchan $chan "$nick $uhost $hand"
 		setuser $hand XTRA weather.loc $text
-		putchan $chan "Location for $hand set to $text."
+		putchan $chan "Location for $nick set to $text."
 	}
 	proc isnumber {str} { return [string is integer -strict $str] }
 	proc isdouble {str} { return [string is double -strict $str] }
