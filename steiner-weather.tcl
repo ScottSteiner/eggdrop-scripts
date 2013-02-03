@@ -66,7 +66,7 @@ namespace eval steiner {
 					foreach nodeName [$nodeList selectNodes /alerts/alert/AlertItem/description/text()] { lappend warnings [$nodeName data] }
 					if {[llength $warnings]} {
 						set alerturl "http://www.accuweather.com/us/nothing/finer/$zip/watches-warnings.asp"
-						set tokens [list %alert_website% [make_bitly $accuweather] %warnings% "[join [lsort -unique $warnings] ", "]"]
+						set tokens [list %alert_website% [make_bitly $alerturl] %warnings% "[join [lsort -unique $warnings] ", "]"]
 						set alert [string map $tokens $steiner::settings::weather::alert_format]
 					} else { set alert "" }
 				}
