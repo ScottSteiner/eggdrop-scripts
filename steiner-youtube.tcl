@@ -23,6 +23,7 @@ namespace eval steiner {
 	variable cache [dict create]
 	variable regex {(?:http(?:s|).{3}|)(?:www.|)(?:youtube.com\/watch\?.*v=|youtu.be\/)([\w-]{11})}
 	variable version "1.2"
+	variable showcachetime false
 	::http::config -useragent $steiner::settings::useragent
 	proc public {nick uhost hand chan text} {
 		if {[channel get $chan steiner] && [channel get $chan youtube] && [regexp -nocase -- $steiner::youtube::regex $text url id]} {
@@ -36,7 +37,8 @@ namespace eval steiner {
 	        if { [catch {
 			global botnick
 			if {([dict exists $steiner::youtube::cache $id time]) && ([expr [unixtime] - [dict get $steiner::youtube::cache $id time]] <= [expr $steiner::settings::youtube::cachetime * 60])} {
-				return "[dict get $steiner::youtube::cache $id output] - Cached from [clock format [dict get $steiner::youtube::cache $id time] -format %Y-%m-%d\ %H:%M:%S]"
+				set cacheoutput [dict get $steiner::youtube::cache $id output]
+				if { $steiner::youtube::showcachetime } { return "$cacheoutput - Cached from [clock format [dict get $steiner::youtube::cache $id time] -format %Y-%m-%d\ %H:%M:%S]" } else { return $cacheoutput }
 			}
 			for { set i 1 } { $i <= $steiner::settings::youtube::retries } { incr i } {
 				set xml [::http::data [::http::geturl "http://gdata.youtube.com/feeds/api/videos/$id\?v=2&alt=jsonc" -timeout [expr $steiner::settings::youtube::timeout * 1000]]]
