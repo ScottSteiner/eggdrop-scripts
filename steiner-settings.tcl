@@ -4,7 +4,7 @@ safesetudef steiner
 namespace eval steiner {
 	namespace eval settings {
 		set prefix			"."
-		set useragent			"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:11.0) Gecko/20100101 Firefox/11.0"
+		set useragent			"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0"
 		namespace eval bitly {
 			set apiKey      	"";					# Insert yours.  Can be found at http://bit.ly/a/your_api_key
 			set domain      	"j.mp";					# Can be either bit.ly or j.mp
