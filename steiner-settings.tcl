@@ -57,6 +57,12 @@ namespace eval steiner {
 			# IP Address to remove the need to DNS api.wunderground.com
 			set ipaddress		38.102.136.138
 		}
+		namespace eval wikipedia
+			namespace eval binds {
+				set wikipedia [list wiki wikipedia]
+			}
+			set timeout 5
+		}
 		namespace eval youtube {
 			# Time, in minutes, youtube results should be cached.	This will reduce bandwidth and prevent you from abusing the API. Default: 1440 (1 day)
 			set cachetime		1440
