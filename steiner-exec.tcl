@@ -14,7 +14,7 @@ if {[catch {source scripts/steiner-settings.tcl} err]} {
 namespace eval steiner {
    namespace eval exec {
 	set flag $steiner::settings::exec::flag
-	if {$steiner::settings::exec::enablepublic} { foreach cmd {date stats sysinfo times timesnew uname uprecords uptime} { bind pub ${flag}|${flag} ${steiner::settings::prefix}$cmd steiner::exec::public } }
+	if {$steiner::settings::exec::enablepublic} { foreach cmd {date stats sysinfo times uname uptime} { bind pub ${flag}|${flag} ${steiner::settings::prefix}$cmd steiner::exec::public } }
 
 	proc public {nick uhost hand chan arg} {
 		if {[string tolower [lindex [split $arg] 0]] == "-p"} { set targ "$nick" } else { set targ "$chan" }
@@ -36,7 +36,6 @@ namespace eval steiner {
 			return 1
 		}
 		if {$cmd == "uname"}	{ set cmd "uname -a" }
-		if {$cmd == "uprecords"} { set cmd "uprecords -a | tail -1 | awk '{printf $2\"%% uptime \";for(i=4;i<NF;i++)printf "%s",$i OFS;}'" }
 		catch { eval exec $cmd } output
 		puthelp "PRIVMSG $targ :$output"
 	}
