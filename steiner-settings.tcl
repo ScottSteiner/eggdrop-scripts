@@ -21,6 +21,14 @@ namespace eval steiner {
 			set enablemsg		1
 			# User flag for users who can use the commands.  Helps with flooding and attacks
 			set flag		"S"
+			#Time zone listings can be found at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+			set times {
+					"Los Angeles" "America/Los_Angeles"
+					"New York" "America/New_York"
+					"London" "Europe/London"
+					"Berlin" "Europe/Berlin"
+					"Tokyo" "Asia/Tokyo"
+			}
 		}
 		namespace eval fortune {
 			# Command for fortune programs

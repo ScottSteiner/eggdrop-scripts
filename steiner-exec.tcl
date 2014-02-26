@@ -14,7 +14,7 @@ if {[catch {source scripts/steiner-settings.tcl} err]} {
 namespace eval steiner {
    namespace eval exec {
 	set flag $steiner::settings::exec::flag
-	if {$steiner::settings::exec::enablepublic} { foreach cmd {date stats sysinfo times uname uptime} { bind pub ${flag}|${flag} ${steiner::settings::prefix}$cmd steiner::exec::public } }
+	if {$steiner::settings::exec::enablepublic} { foreach cmd {date stats sysinfo times timesnew uname uprecords uptime} { bind pub ${flag}|${flag} ${steiner::settings::prefix}$cmd steiner::exec::public } }
 
 	proc public {nick uhost hand chan arg} {
 		if {[string tolower [lindex [split $arg] 0]] == "-p"} { set targ "$nick" } else { set targ "$chan" }
@@ -26,11 +26,17 @@ namespace eval steiner {
 		if {$cmd == "date"}	{ set cmd "date +%F\\ %T%:::z" }
 		if {$cmd == "stats"}	{ puthelp "PRIVMSG $targ :Channel stats can be found at http://scottsteiner.github.io"; return 1 }
 		if {$cmd == "sysinfo"}	{ set cmd "/usr/local/bin/sysinfo" }
-
-		#Time zone listings can be found at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-		if {$cmd == "times"}	{ puthelp "PRIVMSG $targ :[clock format [clock seconds] -format {Los Angeles %I:%M %p %Z} -timezone America/Los_Angeles] | [clock format [clock seconds] -format {New York %I:%M %p %Z} -timezone America/New_York] |\
-								[clock format [clock seconds] -format {London %I:%M %p %Z} -timezone Europe/London] | [clock format [clock seconds] -format {Berlin %I:%M %p %Z} -timezone Europe/Berlin] | [clock format [clock seconds] -format {Tokyo %I:%M %p %Z} -timezone Asia/Tokyo]"; return 1 }
+		if {$cmd == "times"}	{
+			foreach city [dict keys $steiner::settings::exec::times] {
+				set timezone [dict get $steiner::settings::exec::times $city]
+				lappend info "$city [clock format [clock seconds] -format {%I:%M %p %Z} -timezone $timezone]"
+			}
+			set output [join $info " | "]
+			puthelp "PRIVMSG $targ :$output"
+			return 1
+		}
 		if {$cmd == "uname"}	{ set cmd "uname -a" }
+		if {$cmd == "uprecords"} { set cmd "uprecords -a | tail -1 | awk '{printf $2\"%% uptime \";for(i=4;i<NF;i++)printf "%s",$i OFS;}'" }
 		catch { eval exec $cmd } output
 		puthelp "PRIVMSG $targ :$output"
 	}
