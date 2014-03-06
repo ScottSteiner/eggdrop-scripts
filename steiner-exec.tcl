@@ -25,10 +25,10 @@ namespace eval steiner {
 	}
 
 	proc execute { cmd } {
-		if {$cmd == "date"}	{ set cmd "date +%F\\ %T%:::z" }
 		if {$cmd == "sysinfo"}	{ set cmd "/usr/local/bin/sysinfo" }
 		if {$cmd == "uname"}	{ set cmd "uname -a" }
 
+		if {$cmd == "date"}     { return [clock format [clock seconds] -format {%Y-%m-%d %T %Z}] }
 		if {$cmd == "stats"}	{ return "Channel stats can be found at http://scottsteiner.github.io" }
 		if {$cmd == "times"}	{
 			foreach city [dict keys $steiner::settings::exec::times] {
