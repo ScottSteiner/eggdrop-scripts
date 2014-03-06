@@ -13,9 +13,11 @@ if {[catch {source scripts/steiner-settings.tcl} err]} {
 
 namespace eval steiner {
    namespace eval exec {
+	# Protected functions
 	set flag $steiner::settings::exec::flag
-	if {$steiner::settings::exec::enablepublic} { foreach cmd {date stats sysinfo times uname uptime} { bind pub ${flag}|${flag} ${steiner::settings::prefix}$cmd steiner::exec::public } }
-
+	if {$steiner::settings::exec::enablepublic} { foreach cmd {date sysinfo uname uptime} { bind pub ${flag}|${flag} ${steiner::settings::prefix}$cmd steiner::exec::public } }
+	# Public functions
+	if {$steiner::settings::exec::enablepublic} { foreach cmd {stats times} { bind pub -|- ${steiner::settings::prefix}$cmd steiner::exec::public } }
 	proc public {nick uhost hand chan arg} {
 		if {[string tolower [lindex [split $arg] 0]] == "-p"} { set targ "$nick" } else { set targ "$chan" }
 		set cmd [string range [lindex $::lastbind 0] 1 end]
