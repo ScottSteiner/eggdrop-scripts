@@ -2,7 +2,7 @@ steiner-autoop			Auto-ops/voices everybody who joins a channel with the "opall"/
 steiner-dice			Dice roller for World of Darkness games. http://enwp.org/WoD
 steiner-exec			Executes certain, limited shell commands
 steiner-fortune			Grabs a short fortune.  Requires fortune/fortune-mod.
-steiner-weather			Accuweather weather script
+steiner-weather			Weather Underground script
 steiner-youtube			Returns YouTube video information
 
 steiner-settings		Settings file to make upgrading easier
